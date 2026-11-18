@@ -1,0 +1,8 @@
+FxSound presets and DSP parameter code from fxsound2/fxsound-app,
+commit d6d5b740f3efd29e5afcef6724bfd28f2827bc3b (AGPL-3.0).
+https://github.com/fxsound2/fxsound-app
+The 13 factory .fac files are from Installer/Resources/Factsoft, named by preset title.
+controls.js and sos.js are unchanged files from web/dsp-tutorial/js/dsp.
+FxPreset.mm and Ambience.hpp adapt the Lex, Aural, Wide, bass, EQ and Maximizer sample processing
+from that tutorial for native streaming. See LICENSE for the upstream license.
+The 12 bonus .fac files are unchanged entries from bin/BonusPresets/BonusPresets.zip.
