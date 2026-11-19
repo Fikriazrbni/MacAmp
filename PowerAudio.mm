@@ -212,12 +212,15 @@ static const AudioObjectPropertyAddress outputDevicesAddress{
 static const AudioObjectPropertyAddress defaultOutputAddress{
     kAudioHardwarePropertyDefaultOutputDevice,kAudioObjectPropertyScopeGlobal,kAudioObjectPropertyElementMain};
 
-@interface Controller : NSObject <NSApplicationDelegate,NSMenuDelegate>
+@interface Controller : NSObject <NSApplicationDelegate>
 @end
 @implementation Controller {
     NSWindow *window; NSButton *button; NSTextField *status; Engine engine;
     NSTimer *timer; NSUInteger quiet, retryTicks;
     NSStatusItem *menuItem; NSString *outputName;
+    NSMenuItem *powerCommand;
+    NSMenu *outputCommands;
+    NSMutableArray<NSMenuItem *> *presetCommands;
     NSPopUpButton *profiles, *outputPicker;
     AudioObjectPropertyListenerBlock outputListener;
     NSSegmentedControl *collections;
@@ -260,7 +263,6 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     }];
     [mark setTemplate:YES]; menuItem.button.image=mark; menuItem.button.toolTip=@"Power Audio";
     [menuItem.button setAccessibilityLabel:@"Power Audio"];
-    menuItem.menu=[[NSMenu alloc] initWithTitle:@"Power Audio"]; menuItem.menu.delegate=self;
     button=[NSButton buttonWithTitle:@"Aktifkan efek" target:self action:@selector(toggle:)];
     button.frame=NSMakeRect(323,351,139,36); button.bezelColor=NSColor.systemTealColor;
     button.keyEquivalent=@" ";
@@ -313,6 +315,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         if(idx!=NSNotFound) initial=idx+1;
     }
     [self displayProfile:initial];
+    [self installStatusMenu];
     [window center]; [window makeKeyAndOrderFront:nil]; [NSApp activateIgnoringOtherApps:YES];
 }
 -(void)displayProfile:(NSInteger)index {
@@ -333,6 +336,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     compare.toolTip=prior<0 ? @"Pilih dua preset untuk membandingkan." :
         (prior==0 ? @"Prototipe" : factoryNames()[prior-1]);
     engine.select((int)index);
+    for(NSMenuItem *item in presetCommands) item.state=item.tag==index ? NSControlStateValueOn : NSControlStateValueOff;
     [NSUserDefaults.standardUserDefaults setObject:index ? [@"FxSound · " stringByAppendingString:name] : name forKey:@"SelectedPreset"];
 }
 -(void)switchTo:(NSInteger)index {
@@ -375,6 +379,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     [outputPicker selectItem:[choices itemWithTag:current]];
     outputPicker.enabled=choices.numberOfItems>0;
     if(!choices.numberOfItems) [outputPicker addItemWithTitle:@"Output tidak tersedia"];
+    if(outputCommands) [self syncOutputCommands];
 }
 -(void)setMacOutput:(AudioDeviceID)device {
     OSStatus error=AudioObjectSetPropertyData(kAudioObjectSystemObject,&defaultOutputAddress,0,nullptr,sizeof(device),&device);
@@ -386,18 +391,24 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
 }
 -(void)selectWindowOutput:(NSPopUpButton*)sender { [self setMacOutput:(AudioDeviceID)sender.selectedItem.tag]; }
 -(void)selectMenuOutput:(NSMenuItem*)sender { [self setMacOutput:(AudioDeviceID)sender.tag]; }
--(void)menuNeedsUpdate:(NSMenu*)menu {
-    [menu removeAllItems];
-    NSMenuItem *power=[menu addItemWithTitle:button.title action:@selector(toggle:) keyEquivalent:@""];
-    power.target=self;
-    [self refreshOutputs];
-    NSMenuItem *output=[menu addItemWithTitle:@"Output Mac" action:nil keyEquivalent:@""];
-    output.submenu=[[NSMenu alloc] initWithTitle:@"Output Mac"];
+-(void)syncOutputCommands {
+    [outputCommands removeAllItems];
     for(NSMenuItem *choice in outputPicker.itemArray) {
-        NSMenuItem *item=[output.submenu addItemWithTitle:choice.title action:choice.tag ? @selector(selectMenuOutput:) : nil keyEquivalent:@""];
+        NSMenuItem *item=[outputCommands addItemWithTitle:choice.title action:choice.tag ? @selector(selectMenuOutput:) : nil keyEquivalent:@""];
         item.target=self; item.tag=choice.tag;
         item.state=choice.tag && choice==outputPicker.selectedItem ? NSControlStateValueOn : NSControlStateValueOff;
     }
+}
+-(void)installStatusMenu {
+    // AppKit can present this populated menu from any Space, even on the first click.
+    NSMenu *menu=[[NSMenu alloc] initWithTitle:@"Power Audio"];
+    powerCommand=[menu addItemWithTitle:button.title action:@selector(toggle:) keyEquivalent:@""];
+    powerCommand.target=self;
+    NSMenuItem *output=[menu addItemWithTitle:@"Output Mac" action:nil keyEquivalent:@""];
+    outputCommands=[[NSMenu alloc] initWithTitle:@"Output Mac"];
+    output.submenu=outputCommands;
+    [self syncOutputCommands];
+    presetCommands=[NSMutableArray array];
     [menu addItem:[NSMenuItem separatorItem]];
     NSInteger index=0;
     for(NSString *group in @[@"Bawaan",@"Bonus"]) {
@@ -406,6 +417,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         NSArray *names=index ? bonusNames() : [@[@"Prototipe"] arrayByAddingObjectsFromArray:builtInNames()];
         for(NSString *name in names) {
             NSMenuItem *preset=[list addItemWithTitle:name action:@selector(menuPreset:) keyEquivalent:@""];
+            [presetCommands addObject:preset];
             preset.tag=index++; preset.target=self;
             preset.state=preset.tag==engine.selected ? NSControlStateValueOn : NSControlStateValueOff;
         }
@@ -413,6 +425,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     [menu addItem:[NSMenuItem separatorItem]];
     [menu addItemWithTitle:@"Buka Power Audio" action:@selector(showWindow:) keyEquivalent:@""].target=self;
     [menu addItemWithTitle:@"Keluar" action:@selector(terminate:) keyEquivalent:@""].target=NSApp;
+    menuItem.menu=menu;
 }
 -(void)menuPreset:(NSMenuItem*)sender { [self switchTo:sender.tag]; }
 -(void)showWindow:(id)sender { [window makeKeyAndOrderFront:nil]; [NSApp activateIgnoringOtherApps:YES]; }
@@ -430,6 +443,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
 }
 -(void)off:(NSString*)message {
     [timer invalidate]; timer=nil; engine.stop(); status.stringValue=message; button.title=@"Aktifkan efek";
+    powerCommand.title=button.title;
     menuItem.button.toolTip=@"Power Audio · Efek mati";
 }
 -(void)toggle:(id)sender {
@@ -437,6 +451,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     NSString *error=engine.start();
     if(error) { [self off:error]; return; }
     [self connected]; button.title=@"Matikan efek";
+    powerCommand.title=button.title;
     timer=[NSTimer timerWithTimeInterval:.5 target:self selector:@selector(check:) userInfo:nil repeats:YES];
     [NSRunLoop.mainRunLoop addTimer:timer forMode:NSRunLoopCommonModes];
 }
