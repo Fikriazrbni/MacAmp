@@ -16,9 +16,9 @@
 
 | Platform | Paket | Catatan rilis |
 | --- | --- | --- |
-| macOS 14.2 ke atas · Apple Silicon | [Unduh Power Audio untuk Mac](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.3/PowerAudio-v0.7.3-macos-arm64.zip) | [v0.7.3](https://github.com/Fikriazrbni/PowerAudio/releases/tag/v0.7.3) |
+| macOS 14.2 ke atas · Apple Silicon | [Unduh Power Audio untuk Mac](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.4/PowerAudio-v0.7.4-macos-arm64.zip) | [v0.7.4](https://github.com/Fikriazrbni/PowerAudio/releases/tag/v0.7.4) |
 
-Paket berisi aplikasi mandiri. Build memakai tanda tangan ad hoc dan belum dinotariskan oleh Apple. Jika macOS meminta verifikasi saat pertama dibuka, kamu bisa mencocokkan berkas unduhan dengan [checksum SHA-256](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.3/SHA256SUMS.txt). Jika kamu mempercayai unduhan ini, gunakan **Open Anyway** di **System Settings → Privacy & Security** bila tersedia.
+Paket berisi aplikasi mandiri. Build memakai tanda tangan ad hoc dan belum dinotariskan oleh Apple. Jika macOS meminta verifikasi saat pertama dibuka, kamu bisa mencocokkan berkas unduhan dengan [checksum SHA-256](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.4/SHA256SUMS.txt). Jika kamu mempercayai unduhan ini, gunakan **Open Anyway** di **System Settings → Privacy & Security** bila tersedia.
 
 ## Mulai pakai
 
@@ -32,7 +32,7 @@ Paket berisi aplikasi mandiri. Build memakai tanda tangan ad hoc dan belum dinot
 - **25 preset FxSound** mencakup 13 pilihan bawaan dan 12 bonus. Pilihan **Prototipe** menyediakan pengaturan intensitas 50–150%. Aplikasi mengingat pilihan preset dan intensitas terakhir.
 - **Perbandingan langsung** memungkinkan kamu berganti preset saat audio sedang diputar. Grafik statis menampilkan pengaturan sepuluh band EQ pada preset FxSound.
 - **Pemilih output Mac** mengganti perangkat keluaran default sistem dari jendela atau menu bar. Saat efek aktif, Power Audio mengikuti perpindahan output dan mempertahankan preset.
-- **Panel menu bar** terbuka di bawah ikon tiga batang, termasuk saat aplikasi lain fullscreen. Dari panel ini kamu bisa mengaktifkan efek, mengganti output, memilih preset, atau membuka jendela utama.
+- **Panel menu bar** terbuka di bawah ikon tiga batang, termasuk saat aplikasi lain fullscreen. Klik **Output Mac** atau **Preset** untuk membuka daftar tepat di bawah kontrolnya. Daftar menutup setelah kamu memilih.
 
 ## Tampilan
 
@@ -47,7 +47,7 @@ Saat efek aktif, Power Audio menggunakan Core Audio Tap untuk membaca suara yang
 
 ## Dokumentasi
 
-- [Catatan rilis v0.7.3](docs/release-v0.7.3.md) · [Semua rilis](https://github.com/Fikriazrbni/PowerAudio/releases)
+- [Catatan rilis v0.7.4](docs/release-v0.7.4.md) · [Semua rilis](https://github.com/Fikriazrbni/PowerAudio/releases)
 - [Antarmuka dan routing Core Audio](PowerAudio.mm) · [Pemrosesan preset](FxPreset.mm) · [Efek ambience](Ambience.hpp)
 - [Asal preset dan komponen DSP](FxSound/NOTICE.txt) · [Lisensi AGPL-3.0](LICENSE)
 
