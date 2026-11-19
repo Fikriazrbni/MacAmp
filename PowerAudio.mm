@@ -237,8 +237,14 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     window.title=@"Power Audio"; window.releasedWhenClosed=NO;
     NSView *view=window.contentView;
     NSTextField *title=label(@"Power Audio",NSMakeRect(70,351,210,36),27,NSFontWeightBold);
-    NSImage *art=[[NSImage alloc] initWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"PowerAudio" ofType:@"icns"]];
-    NSApp.applicationIconImage=art;
+    NSImage *art=[[NSImage alloc] initWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"PowerAudio" ofType:@"png"]];
+    if (art) {
+        NSApp.applicationIconImage=art;
+        NSImageView *dockIcon=[NSImageView imageViewWithImage:art];
+        dockIcon.imageScaling=NSImageScaleProportionallyUpOrDown;
+        NSApp.dockTile.contentView=dockIcon;
+        [NSApp.dockTile display];
+    }
     NSImageView *icon=[NSImageView imageViewWithImage:art];
     icon.frame=NSMakeRect(19,346,45,45);
     menuItem=[NSStatusBar.systemStatusBar statusItemWithLength:NSVariableStatusItemLength];

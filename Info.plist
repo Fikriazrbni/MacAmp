@@ -3,11 +3,11 @@
 <plist version="1.0"><dict>
 <key>CFBundleIdentifier</key><string>local.poweraudio.prototype</string>
 <key>CFBundleExecutable</key><string>PowerAudio</string>
-<key>CFBundleIconFile</key><string>PowerAudio.icns</string>
+<key>CFBundleIconFile</key><string>AppIcon.icns</string>
 <key>CFBundleName</key><string>Power Audio</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>9</string>
-<key>CFBundleShortVersionString</key><string>0.7</string>
+<key>CFBundleVersion</key><string>10</string>
+<key>CFBundleShortVersionString</key><string>0.7.1</string>
 <key>LSMinimumSystemVersion</key><string>14.2</string>
 <key>NSAudioCaptureUsageDescription</key><string>Power Audio memakai audio sistem untuk memperkuat suara dan memutarnya kembali secara langsung.</string>
 </dict></plist>
