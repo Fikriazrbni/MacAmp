@@ -218,9 +218,10 @@ static const AudioObjectPropertyAddress defaultOutputAddress{
     NSWindow *window; NSButton *button; NSTextField *status; Engine engine;
     NSTimer *timer; NSUInteger quiet, retryTicks;
     NSStatusItem *menuItem; NSString *outputName;
-    NSMenuItem *powerCommand;
-    NSMenu *outputCommands;
-    NSMutableArray<NSMenuItem *> *presetCommands;
+    NSPanel *controlsPanel;
+    NSButton *powerCommand;
+    NSPopUpButton *quickOutput, *quickPreset;
+    id outsideClick, localClick;
     NSPopUpButton *profiles, *outputPicker;
     AudioObjectPropertyListenerBlock outputListener;
     NSSegmentedControl *collections;
@@ -315,7 +316,8 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         if(idx!=NSNotFound) initial=idx+1;
     }
     [self displayProfile:initial];
-    [self installStatusMenu];
+    menuItem.button.target=self;
+    menuItem.button.action=@selector(toggleControls:);
     [window center]; [window makeKeyAndOrderFront:nil]; [NSApp activateIgnoringOtherApps:YES];
 }
 -(void)displayProfile:(NSInteger)index {
@@ -336,7 +338,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     compare.toolTip=prior<0 ? @"Pilih dua preset untuk membandingkan." :
         (prior==0 ? @"Prototipe" : factoryNames()[prior-1]);
     engine.select((int)index);
-    for(NSMenuItem *item in presetCommands) item.state=item.tag==index ? NSControlStateValueOn : NSControlStateValueOff;
+    [quickPreset selectItemWithTag:index];
     [NSUserDefaults.standardUserDefaults setObject:index ? [@"FxSound · " stringByAppendingString:name] : name forKey:@"SelectedPreset"];
 }
 -(void)switchTo:(NSInteger)index {
@@ -379,7 +381,9 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     [outputPicker selectItem:[choices itemWithTag:current]];
     outputPicker.enabled=choices.numberOfItems>0;
     if(!choices.numberOfItems) [outputPicker addItemWithTitle:@"Output tidak tersedia"];
-    if(outputCommands) [self syncOutputCommands];
+    quickOutput.menu=[outputPicker.menu copy];
+    [quickOutput selectItemWithTag:current];
+    quickOutput.enabled=outputPicker.enabled;
 }
 -(void)setMacOutput:(AudioDeviceID)device {
     OSStatus error=AudioObjectSetPropertyData(kAudioObjectSystemObject,&defaultOutputAddress,0,nullptr,sizeof(device),&device);
@@ -390,45 +394,74 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     [self refreshOutputs];
 }
 -(void)selectWindowOutput:(NSPopUpButton*)sender { [self setMacOutput:(AudioDeviceID)sender.selectedItem.tag]; }
--(void)selectMenuOutput:(NSMenuItem*)sender { [self setMacOutput:(AudioDeviceID)sender.tag]; }
--(void)syncOutputCommands {
-    [outputCommands removeAllItems];
-    for(NSMenuItem *choice in outputPicker.itemArray) {
-        NSMenuItem *item=[outputCommands addItemWithTitle:choice.title action:choice.tag ? @selector(selectMenuOutput:) : nil keyEquivalent:@""];
-        item.target=self; item.tag=choice.tag;
-        item.state=choice.tag && choice==outputPicker.selectedItem ? NSControlStateValueOn : NSControlStateValueOff;
-    }
-}
--(void)installStatusMenu {
-    // AppKit can present this populated menu from any Space, even on the first click.
-    NSMenu *menu=[[NSMenu alloc] initWithTitle:@"Power Audio"];
-    powerCommand=[menu addItemWithTitle:button.title action:@selector(toggle:) keyEquivalent:@""];
-    powerCommand.target=self;
-    NSMenuItem *output=[menu addItemWithTitle:@"Output Mac" action:nil keyEquivalent:@""];
-    outputCommands=[[NSMenu alloc] initWithTitle:@"Output Mac"];
-    output.submenu=outputCommands;
-    [self syncOutputCommands];
-    presetCommands=[NSMutableArray array];
-    [menu addItem:[NSMenuItem separatorItem]];
+-(void)createControlsPanel {
+    controlsPanel=[[NSPanel alloc] initWithContentRect:NSMakeRect(0,0,316,189)
+        styleMask:NSWindowStyleMaskNonactivatingPanel|NSWindowStyleMaskTitled|NSWindowStyleMaskFullSizeContentView
+        backing:NSBackingStoreBuffered defer:NO];
+    controlsPanel.title=@"Kontrol Power Audio";
+    controlsPanel.titlebarAppearsTransparent=YES;
+    controlsPanel.titleVisibility=NSWindowTitleHidden;
+    controlsPanel.hidesOnDeactivate=NO;
+    controlsPanel.level=NSStatusWindowLevel;
+    controlsPanel.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces |
+        NSWindowCollectionBehaviorFullScreenAuxiliary | NSWindowCollectionBehaviorCanJoinAllApplications;
+    NSView *view=controlsPanel.contentView;
+    [view addSubview:label(@"Power Audio",NSMakeRect(15,147,147,26),17,NSFontWeightSemibold)];
+    powerCommand=[NSButton buttonWithTitle:button.title target:self action:@selector(toggle:)];
+    powerCommand.frame=NSMakeRect(165,144,139,32);
+    [view addSubview:powerCommand];
+    quickOutput=[[NSPopUpButton alloc] initWithFrame:NSMakeRect(98,101,204,28) pullsDown:NO];
+    quickOutput.target=self; quickOutput.action=@selector(selectWindowOutput:);
+    [quickOutput setAccessibilityLabel:@"Output Mac"];
+    [view addSubview:label(@"Output Mac",NSMakeRect(15,103,80,21),13,NSFontWeightMedium)];
+    [view addSubview:quickOutput];
+    quickPreset=[[NSPopUpButton alloc] initWithFrame:NSMakeRect(98,65,204,28) pullsDown:NO];
+    quickPreset.target=self; quickPreset.action=@selector(quickPresetChanged:);
+    [quickPreset setAccessibilityLabel:@"Preset suara"];
     NSInteger index=0;
     for(NSString *group in @[@"Bawaan",@"Bonus"]) {
-        NSMenuItem *entry=[menu addItemWithTitle:group action:nil keyEquivalent:@""];
-        NSMenu *list=[[NSMenu alloc] initWithTitle:group]; entry.submenu=list;
+        NSMenuItem *heading=[NSMenuItem sectionHeaderWithTitle:group]; heading.tag=-1; [quickPreset.menu addItem:heading];
         NSArray *names=index ? bonusNames() : [@[@"Prototipe"] arrayByAddingObjectsFromArray:builtInNames()];
-        for(NSString *name in names) {
-            NSMenuItem *preset=[list addItemWithTitle:name action:@selector(menuPreset:) keyEquivalent:@""];
-            [presetCommands addObject:preset];
-            preset.tag=index++; preset.target=self;
-            preset.state=preset.tag==engine.selected ? NSControlStateValueOn : NSControlStateValueOff;
-        }
+        for(NSString *name in names) [quickPreset.menu addItemWithTitle:name action:nil keyEquivalent:@""].tag=index++;
     }
-    [menu addItem:[NSMenuItem separatorItem]];
-    [menu addItemWithTitle:@"Buka Power Audio" action:@selector(showWindow:) keyEquivalent:@""].target=self;
-    [menu addItemWithTitle:@"Keluar" action:@selector(terminate:) keyEquivalent:@""].target=NSApp;
-    menuItem.menu=menu;
+    [view addSubview:label(@"Preset",NSMakeRect(15,67,80,21),13,NSFontWeightMedium)];
+    [view addSubview:quickPreset];
+    NSButton *open=[NSButton buttonWithTitle:@"Buka Power Audio" target:self action:@selector(showWindow:)];
+    open.frame=NSMakeRect(10,15,156,32); [view addSubview:open];
+    NSButton *quit=[NSButton buttonWithTitle:@"Keluar" target:NSApp action:@selector(terminate:)];
+    quit.frame=NSMakeRect(226,15,78,32); [view addSubview:quit];
 }
--(void)menuPreset:(NSMenuItem*)sender { [self switchTo:sender.tag]; }
--(void)showWindow:(id)sender { [window makeKeyAndOrderFront:nil]; [NSApp activateIgnoringOtherApps:YES]; }
+-(void)quickPresetChanged:(NSPopUpButton*)sender { [self switchTo:sender.selectedItem.tag]; }
+-(void)hideControls {
+    if(outsideClick) { [NSEvent removeMonitor:outsideClick]; outsideClick=nil; }
+    if(localClick) { [NSEvent removeMonitor:localClick]; localClick=nil; }
+    [controlsPanel orderOut:nil];
+}
+-(void)toggleControls:(id)sender {
+    if(controlsPanel.visible && controlsPanel.isOnActiveSpace) { [self hideControls]; return; }
+    if(!controlsPanel) [self createControlsPanel];
+    [self hideControls];
+    [self refreshOutputs]; [quickPreset selectItemWithTag:engine.selected];
+    powerCommand.title=button.title;
+    NSPoint cursor=NSEvent.mouseLocation;
+    NSScreen *screen=menuItem.button.window.screen ?: NSScreen.mainScreen;
+    for(NSScreen *candidate in NSScreen.screens) if(NSPointInRect(cursor,candidate.frame)) { screen=candidate; break; }
+    NSRect display=screen.frame;
+    CGFloat width=NSWidth(controlsPanel.frame);
+    CGFloat x=std::clamp(cursor.x-width/2,NSMinX(display)+4,NSMaxX(display)-width-4);
+    CGFloat inset=std::max(NSStatusBar.systemStatusBar.thickness,screen.safeAreaInsets.top);
+    [controlsPanel setFrameTopLeftPoint:NSMakePoint(x,NSMaxY(display)-inset-3)];
+    [controlsPanel orderFrontRegardless];
+    NSEventMask clicks=NSEventMaskLeftMouseDown|NSEventMaskRightMouseDown;
+    __weak Controller *weakSelf=self;
+    outsideClick=[NSEvent addGlobalMonitorForEventsMatchingMask:clicks handler:^(NSEvent *event){ [weakSelf hideControls]; }];
+    localClick=[NSEvent addLocalMonitorForEventsMatchingMask:clicks handler:^NSEvent*(NSEvent *event){
+        Controller *owner=weakSelf;
+        if(owner && event.window==owner->window) [owner hideControls];
+        return event;
+    }];
+}
+-(void)showWindow:(id)sender { [self hideControls]; [window makeKeyAndOrderFront:nil]; [NSApp activateIgnoringOtherApps:YES]; }
 -(BOOL)applicationShouldHandleReopen:(NSApplication*)app hasVisibleWindows:(BOOL)visible {
     [self showWindow:nil]; return NO;
 }
