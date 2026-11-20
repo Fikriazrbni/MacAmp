@@ -37,6 +37,11 @@ Paket berisi aplikasi mandiri. Build memakai tanda tangan ad hoc dan belum dinot
 ## Tampilan
 
 <p align="center">
+  <img src="docs/menu-bar-presets-v0.7.4.png" alt="Panel menu bar Power Audio v0.7.4 dengan dropdown Preset terbuka dan General terpilih" width="316"><br>
+  <sub>Klik ikon tiga batang dekat notch, lalu pilih <b>Preset</b>. Daftarnya terbuka langsung di bawah pilihan aktif.</sub>
+</p>
+
+<p align="center">
   <img src="docs/power-audio-v0.7.png" alt="Power Audio menampilkan output Mac, preset bonus Pop dan grafik equalizer sepuluh band" width="482"><br>
   <sub>Preset Pop aktif pada speaker Bluetooth di Power Audio v0.7.</sub>
 </p>
