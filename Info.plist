@@ -2,13 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
 <key>CFBundleIdentifier</key><string>local.poweraudio.prototype</string>
-<key>CFBundleExecutable</key><string>PowerAudio</string>
+<key>CFBundleDevelopmentRegion</key><string>en</string>
+<key>CFBundleExecutable</key><string>MacAmp</string>
 <key>CFBundleIconFile</key><string>AppIcon.icns</string>
-<key>CFBundleName</key><string>Power Audio</string>
+<key>CFBundleDisplayName</key><string>MacAmp</string>
+<key>CFBundleName</key><string>MacAmp</string>
 <key>CFBundlePackageType</key><string>APPL</string>
 <key>LSUIElement</key><true/>
-<key>CFBundleVersion</key><string>14</string>
-<key>CFBundleShortVersionString</key><string>0.7.5</string>
+<key>CFBundleVersion</key><string>15</string>
+<key>CFBundleShortVersionString</key><string>0.7.6</string>
 <key>LSMinimumSystemVersion</key><string>14.2</string>
-<key>NSAudioCaptureUsageDescription</key><string>Power Audio memakai audio sistem untuk memperkuat suara dan memutarnya kembali secara langsung.</string>
+<key>NSAudioCaptureUsageDescription</key><string>MacAmp captures system audio to apply effects and play the processed sound through your selected output.</string>
 </dict></plist>

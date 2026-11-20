@@ -1,7 +1,7 @@
-## Kontrol Power Audio saat fullscreen
+## Full-screen controls for Power Audio
 
-Di v0.7.2, klik ikon tiga batang saat Brave atau Codex fullscreen bisa membuat ikon tersorot tanpa menampilkan menu. Pada v0.7.3, klik ikon membuka panel di bawah menu bar pada layar yang diklik. Panel dapat tampil di Space fullscreen aplikasi lain.
+In v0.7.2, clicking the three-bar icon while Brave or Codex was in full screen could highlight the icon without opening the menu. In v0.7.3, clicking the icon opens a panel beneath the menu bar on the display you clicked, including in another app’s full-screen Space.
 
-Dari panel, kamu bisa menyalakan atau mematikan efek, memilih **Output Mac** dan **Preset**, membuka jendela utama, atau keluar dari Power Audio. Klik ikon sekali lagi untuk menutup panel.
+Use the panel to toggle effects, choose an output or preset, open the main window, or quit Power Audio. Click the icon again to dismiss the panel.
 
-Untuk memperbarui, keluar dari Power Audio, ekstrak **PowerAudio-v0.7.3-macos-arm64.zip**, ganti salinan lama di Applications, lalu buka kembali. Paket ini untuk macOS 14.2 ke atas pada Apple Silicon. Build memakai tanda tangan ad hoc dan belum dinotariskan Apple.
+To update, quit Power Audio, extract **PowerAudio-v0.7.3-macos-arm64.zip**, replace the previous copy in Applications, and reopen the app. This build requires Apple Silicon and macOS 14.2 or later. It is ad hoc signed and has not been notarized by Apple.

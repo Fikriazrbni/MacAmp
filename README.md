@@ -1,85 +1,82 @@
-<p align="center"><img src="docs/icon.png" alt="Ikon Tiga Nada" width="72"></p>
+<p align="center"><img src="docs/icon.png" alt="MacAmp’s three-bar icon" width="72"></p>
 
-<h1 align="center">Power Audio</h1>
+<h1 align="center">MacAmp</h1>
 
-<p align="center">Atur karakter suara Mac dengan preset FxSound, bandingkan dua preset saat musik berjalan, dan pindahkan output langsung dari menu bar.</p>
+<p align="center">Boost your Mac’s audio with FxSound presets. Compare two presets while music plays and switch between speakers and headphones from the menu bar.</p>
 
 <p align="center">
-  <a href="#unduh">Unduh</a> ·
-  <a href="#mulai-pakai">Mulai pakai</a> ·
-  <a href="#fitur">Fitur</a> ·
-  <a href="#tampilan">Tampilan</a> ·
-  <a href="#dokumentasi">Dokumentasi</a>
+  <a href="#download">Download</a> ·
+  <a href="#getting-started">Getting started</a> ·
+  <a href="#features">Features</a> ·
+  <a href="#screenshots">Screenshots</a> ·
+  <a href="#documentation">Documentation</a>
 </p>
 
-## Unduh
+## Download
 
-| Platform | Paket | Catatan rilis |
+| Platform | Download | Release notes |
 | --- | --- | --- |
-| macOS 14.2 ke atas · Apple Silicon | [Unduh Power Audio untuk Mac](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.5/PowerAudio-v0.7.5-macos-arm64.zip) | [v0.7.5](https://github.com/Fikriazrbni/PowerAudio/releases/tag/v0.7.5) |
+| Apple Silicon · macOS 14.2 or later | [Download MacAmp for Mac](https://github.com/Fikriazrbni/MacAmp/releases/download/v0.7.6/MacAmp-v0.7.6-macos-arm64.zip) | [v0.7.6](https://github.com/Fikriazrbni/MacAmp/releases/tag/v0.7.6) |
 
-Paket berisi aplikasi mandiri. Build memakai tanda tangan ad hoc dan belum dinotariskan oleh Apple. Jika macOS meminta verifikasi saat pertama dibuka, kamu bisa mencocokkan berkas unduhan dengan [checksum SHA-256](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.5/SHA256SUMS.txt). Jika kamu mempercayai unduhan ini, gunakan **Open Anyway** di **System Settings → Privacy & Security** bila tersedia.
+The app is ad hoc signed and has not been notarized by Apple. To verify the download, save the [SHA-256 checksum](https://github.com/Fikriazrbni/MacAmp/releases/download/v0.7.6/SHA256SUMS.txt) alongside the ZIP and run `shasum -a 256 -c SHA256SUMS.txt` in that folder. If macOS blocks the first launch and you trust the download, open **System Settings → Privacy & Security** and choose **Open Anyway** if available.
 
-## Mulai pakai
+## Getting started
 
-1. Ekstrak ZIP, pindahkan **Power Audio.app** ke **Applications**, lalu buka. Ikon tiga batang muncul di menu bar. Pada v0.7.5, jendela utama tetap tertutup saat aplikasi mulai, dan Power Audio tidak muncul di Dock atau ⌘ Tab.
-2. **Untuk membuka jendela utama**, klik **ikon tiga batang → Buka Power Audio**. Dari panel yang sama kamu juga bisa langsung memilih output dan preset.
-3. Putar musik atau video, pilih perangkat di **Output Mac**, lalu klik **Aktifkan efek**. Izinkan akses audio sistem saat macOS memintanya.
-4. Di jendela utama, coba **Bawaan → Music**, lalu **Bonus → Pop**. Klik **Preset sebelumnya** untuk membandingkan keduanya. Klik **Matikan efek** untuk mendengar audio asli.
-5. Tutup jendela utama untuk melanjutkan pemakaian dari menu bar. Efek yang aktif terus berjalan. Untuk menghentikan aplikasi, klik **ikon tiga batang → Keluar**.
+1. Unzip the download, move **MacAmp.app** to **Applications**, then open it. If you are upgrading from Power Audio, quit the old app first. MacAmp uses the same saved preset and intensity.
+2. Click the **three-bar icon → Open MacAmp** to open the main window. MacAmp starts in the menu bar and stays out of the Dock and the ⌘ Tab switcher.
+3. Play music or a video, choose your device under **Mac Output**, then click **Enable Effects**. Allow system audio recording when macOS asks.
+4. Try **Built-in → Music**, then **Bonus → Pop**. Click **Previous Preset** to compare the two, or **Disable Effects** to hear the original audio.
+5. Close the window to keep listening with the current effects. To exit the app, click the **three-bar icon → Quit**.
 
-## Fitur
+## Features
 
-- **25 preset FxSound** mencakup 13 pilihan bawaan dan 12 bonus. Pilihan **Prototipe** menyediakan pengaturan intensitas 50–150%. Aplikasi mengingat pilihan preset dan intensitas terakhir.
-- **Perbandingan langsung** memungkinkan kamu berganti preset saat audio sedang diputar. Grafik statis menampilkan pengaturan sepuluh band EQ pada preset FxSound.
-- **Pemilih output Mac** mengganti perangkat keluaran default sistem dari jendela atau menu bar. Saat efek aktif, Power Audio mengikuti perpindahan output dan mempertahankan preset.
-- **Panel menu bar** terbuka di bawah ikon tiga batang, termasuk saat aplikasi lain fullscreen. Klik **Output Mac** atau **Preset** untuk membuka daftar tepat di bawah kontrolnya. Daftar menutup setelah kamu memilih.
+- **25 FxSound presets** across two collections, with 13 built-in presets and 12 bonus presets. The separate **Prototype** effect has an adjustable intensity of 50–150%.
+- **Preset comparison** lets you switch back to the previous preset during playback. The main window shows the selected preset’s ten-band EQ curve.
+- **Output switching** changes your Mac’s default sound device from the main window or menu bar. Active effects follow the new output and keep your preset.
+- **Full-screen controls** let you open the output and preset lists below the three-bar icon while another app is in full screen. Select an item to apply it, or click the icon again to dismiss the panel.
 
-## Tampilan
+## Screenshots
 
 <p align="center">
-  <img src="docs/menu-bar-presets-v0.7.4.png" alt="Panel menu bar Power Audio v0.7.4 dengan dropdown Preset terbuka dan General terpilih" width="316"><br>
-  <sub>Klik ikon tiga batang dekat notch, lalu pilih <b>Preset</b>. Daftarnya terbuka langsung di bawah pilihan aktif.</sub>
+  <img src="docs/macamp-menu-bar.png" alt="MacAmp menu bar panel with the preset list expanded and General selected" width="316"><br>
+  <sub>Choose a preset directly from the menu bar.</sub>
 </p>
 
 <p align="center">
-  <img src="docs/power-audio-v0.7.png" alt="Power Audio menampilkan output Mac, preset bonus Pop dan grafik equalizer sepuluh band" width="482"><br>
-  <sub>Preset Pop aktif pada speaker Bluetooth di Power Audio v0.7.</sub>
+  <img src="docs/macamp-window.png" alt="MacAmp main window showing the Pop preset, its EQ curve, and the selected output" width="482"><br>
+  <sub>The main window shows the EQ curve for the selected preset.</sub>
 </p>
 
-## Privasi
+## Privacy
 
-Saat efek aktif, Power Audio menggunakan Core Audio Tap untuk membaca suara yang diputar aplikasi lain dan meneruskan hasil pemrosesan ke output pilihanmu. Suara panggilan yang terdengar melalui output juga dapat ikut diproses. Pemrosesan berlangsung di memori Mac. Aplikasi tidak merekam audio ke berkas, mengirim sampel audio ke server, atau memerlukan akun.
+While effects are enabled, MacAmp uses a Core Audio tap to capture audio playing in other apps and sends the processed sound to your selected output. This can include call audio played through that output. Processing happens in memory on your Mac. MacAmp does not save recordings, send audio to a server, or require an account.
 
-## Dokumentasi
+## Documentation
 
-- [Catatan rilis v0.7.5](docs/release-v0.7.5.md) · [Semua rilis](https://github.com/Fikriazrbni/PowerAudio/releases)
-- [Antarmuka dan routing Core Audio](PowerAudio.mm) · [Pemrosesan preset](FxPreset.mm) · [Efek ambience](Ambience.hpp)
-- [Asal preset dan komponen DSP](FxSound/NOTICE.txt) · [Lisensi AGPL-3.0](LICENSE)
+- [v0.7.6 release notes](docs/release-v0.7.6.md) · [All releases](https://github.com/Fikriazrbni/MacAmp/releases)
+- [App interface and Core Audio routing](MacAmp.mm) · [Preset processing](FxPreset.mm) · [Ambience effect](Ambience.hpp)
+- [Preset and DSP credits](FxSound/NOTICE.txt) · [AGPL-3.0 license](LICENSE)
 
-<details>
-<summary>Build dan tes lokal di macOS</summary>
+## Build locally
 
-Pasang Xcode Command Line Tools dengan SDK macOS yang menyediakan Core Audio Taps, lalu jalankan dari root repo.
+Install the Xcode Command Line Tools with a macOS SDK that includes Core Audio taps. From the repository root, run:
 
 ```sh
 sh build.sh
-open "Power Audio.app"
+open MacAmp.app
 ```
 
-Build memakai Objective-C++, AppKit, Core Audio, dan JavaScriptCore bawaan macOS. Skrip menyusun bundle untuk arsitektur mesin build, memberi tanda tangan ad hoc, lalu menjalankan tes DSP untuk preset pada 44,1, 48, dan 96 kHz. Untuk mengulang tes tanpa membuka jendela, jalankan perintah berikut.
+MacAmp uses Objective-C++, AppKit, Core Audio, and JavaScriptCore. The script builds for your Mac’s architecture, ad hoc signs the app, and tests the DSP at 44.1, 48, and 96 kHz. To rerun the tests without opening the interface:
 
 ```sh
-"./Power Audio.app/Contents/MacOS/PowerAudio" --test-dsp
+./MacAmp.app/Contents/MacOS/MacAmp --test-dsp
 ```
 
-</details>
-
 <details>
-<summary>Jika suara belum terdengar</summary>
+<summary>Troubleshooting audio</summary>
 
-Pastikan nama perangkat di **Output Mac** sesuai dengan speaker atau headset yang digunakan. Jika status menunggu audio, putar audio dari aplikasi lain. Periksa izin perekaman audio sistem untuk Power Audio di **Privacy & Security** jika izin sebelumnya ditolak. Perangkat Bluetooth perlu tersambung ke Mac agar muncul di daftar. Jalur real-time mendukung format PCM float 32-bit yang kompatibel; format dan mode perangkat lain dapat memicu pesan kesalahan.
+Check that **Mac Output** shows the speaker or headset you want to use. If the status says **Waiting for audio**, play audio from another app. If you previously denied access, check MacAmp’s system audio recording permission in **System Settings → Privacy & Security**. Connect Bluetooth devices before selecting them. The audio engine supports compatible 32-bit float PCM streams and reports unsupported device formats in the main window.
 
 </details>
 
-Power Audio adalah proyek independen oleh **Fikriazrbni**. Preset dan bagian pemrosesan suara berasal dari [FxSound](https://github.com/fxsound2/fxsound-app).
+MacAmp is an independent project by **Fikriazrbni**. Its presets and parts of its audio processing come from [FxSound](https://github.com/fxsound2/fxsound-app).

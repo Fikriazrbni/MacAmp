@@ -1,21 +1,21 @@
-## Power Audio v0.7 untuk macOS
+## Power Audio v0.7 for macOS
 
-Rilis publik pertama Power Audio menghadirkan 25 preset FxSound, perbandingan dua preset, dan kontrol output Mac dari menu bar.
+The first public release includes 25 FxSound presets, preset comparison, and output controls in the menu bar.
 
-- Pilih dari 13 preset bawaan, 12 preset bonus, atau atur intensitas efek Prototipe.
-- Ganti speaker atau headset dari **Output Mac** di jendela atau menu bar. Efek aktif mengikuti output default Mac.
-- Lihat pengaturan EQ sepuluh band dan bandingkan dengan pilihan terakhir lewat **Preset sebelumnya**.
+- Choose from 13 built-in presets and 12 bonus presets, or adjust the intensity of the prototype effect.
+- Switch between speakers and headphones from the main window or menu bar. Active effects follow the Mac’s default output.
+- View each preset’s ten-band EQ and switch back to the previous preset to compare them.
 
-### Instalasi
+### Installation
 
-Unduh **PowerAudio-v0.7-macos-arm64.zip** untuk Mac Apple Silicon dengan macOS 14.2 atau lebih baru. Ekstrak, pindahkan **Power Audio.app** ke **Applications**, lalu buka. Klik **Aktifkan efek** dan izinkan akses audio sistem. Build menggunakan tanda tangan ad hoc dan belum dinotariskan oleh Apple.
+Download **PowerAudio-v0.7-macos-arm64.zip** for an Apple Silicon Mac running macOS 14.2 or later. Unzip it, move **Power Audio.app** to **Applications**, and open it. Enable effects and allow system audio recording when prompted. This build is ad hoc signed and has not been notarized by Apple.
 
-### Verifikasi unduhan
+### Verify the download
 
-Unduh **SHA256SUMS.txt** ke folder yang sama dengan ZIP, lalu jalankan perintah berikut dari folder tersebut.
+Save **SHA256SUMS.txt** alongside the ZIP and run this command in the same folder:
 
 ```sh
 shasum -a 256 -c SHA256SUMS.txt
 ```
 
-Kode sumber tersedia pada tag **v0.7**. Lihat [README rilis](https://github.com/Fikriazrbni/PowerAudio/blob/v0.7/README.md) untuk petunjuk penggunaan, build, privasi, dan atribusi.
+The source code is available at the **v0.7** tag. See the [release README](https://github.com/Fikriazrbni/MacAmp/blob/v0.7/README.md) for build instructions, usage, privacy, and credits.

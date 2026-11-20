@@ -1,7 +1,7 @@
-## Dropdown output dan preset di menu bar
+## Output and preset lists in the menu bar
 
-Pada v0.7.3, panel dapat muncul saat aplikasi lain fullscreen, tetapi klik pada **Output Mac** atau **Preset** terkadang gagal menampilkan pilihan. Di v0.7.4, daftar terbuka langsung di bawah kontrol yang diklik. Kontrol lain tetap terlihat saat kamu menggulir daftar. Pilih perangkat atau preset untuk menerapkannya dan menutup daftar, atau klik kontrol yang sama untuk menutupnya tanpa mengubah pilihan.
+In v0.7.3, the panel could open over a full-screen app, but clicking the output or preset control sometimes failed to show its choices. In v0.7.4, each list expands directly beneath its control. Other controls stay visible while you scroll. Select an item to apply it and close the list, or click the same control again to dismiss the list and keep your current selection.
 
-Klik ikon tiga batang sekali lagi untuk menyembunyikan seluruh panel, termasuk saat daftar output atau preset sedang terbuka.
+Click the three-bar icon again to hide the entire panel, even while a list is open.
 
-Untuk memperbarui, keluar dari Power Audio, ekstrak **PowerAudio-v0.7.4-macos-arm64.zip**, ganti salinan lama di Applications, lalu buka kembali. Paket ini untuk Apple Silicon dengan macOS 14.2 ke atas. Build menggunakan tanda tangan ad hoc dan belum dinotariskan Apple.
+To update, quit Power Audio, extract **PowerAudio-v0.7.4-macos-arm64.zip**, replace the previous copy in Applications, and reopen the app. This build requires Apple Silicon and macOS 14.2 or later. It is ad hoc signed and has not been notarized by Apple.

@@ -157,18 +157,18 @@ struct Engine {
     NSString *start() {
         invalid=false; signal=false;
         if(readProp(1,kAudioHardwarePropertyDefaultOutputDevice,&device,sizeof(device)) || !device)
-            return @"Output audio tidak tersedia.";
+            return @"No audio output is available.";
         CFStringRef uid=nullptr;
-        if(readProp(device,kAudioDevicePropertyDeviceUID,&uid,sizeof(uid)) || !uid) return @"Gagal membaca perangkat output.";
+        if(readProp(device,kAudioDevicePropertyDeviceUID,&uid,sizeof(uid)) || !uid) return @"Could not read the output device.";
         NSString *outputUID=CFBridgingRelease(uid);
-        if(readProp(device,kAudioDevicePropertyNominalSampleRate,&rate,sizeof(rate)) || !(rate>0)) return @"Sample rate tidak tersedia.";
+        if(readProp(device,kAudioDevicePropertyNominalSampleRate,&rate,sizeof(rate)) || !(rate>0)) return @"The output sample rate is unavailable.";
         parameters=[NSMutableArray array];
         NSString *error=loadFactory(parameters,rate);
         if(error) return error;
         active=prepare(selected); step=float(1/(.020*rate));
         pid_t pid=getpid(); AudioObjectID me=0; UInt32 size=sizeof(me);
         AudioObjectPropertyAddress addr{kAudioHardwarePropertyTranslatePIDToProcessObject,kAudioObjectPropertyScopeGlobal,0};
-        if(AudioObjectGetPropertyData(1,&addr,sizeof(pid),&pid,&size,&me) || !me) return @"Gagal mengenali proses audio aplikasi.";
+        if(AudioObjectGetPropertyData(1,&addr,sizeof(pid),&pid,&size,&me) || !me) return @"Could not identify the app’s audio process.";
         UInt32 transport=0;
         readProp(device,kAudioDevicePropertyTransportType,&transport,sizeof(transport));
         bool bluetooth=transport==kAudioDeviceTransportTypeBluetooth || transport==kAudioDeviceTransportTypeBluetoothLE;
@@ -176,17 +176,17 @@ struct Engine {
         CATapDescription *desc=bluetooth
             ? [[CATapDescription alloc] initExcludingProcesses:@[@(me)] andDeviceUID:outputUID withStream:0]
             : [[CATapDescription alloc] initStereoGlobalTapButExcludeProcesses:@[@(me)]];
-        desc.name=@"Power Audio"; [desc setPrivate:YES]; desc.muteBehavior=CATapMutedWhenTapped;
+        desc.name=@"MacAmp"; [desc setPrivate:YES]; desc.muteBehavior=CATapMutedWhenTapped;
         OSStatus s=AudioHardwareCreateProcessTap(desc,&tap);
-        if(s) return [NSString stringWithFormat:@"Tap gagal (%d). Periksa izin audio sistem.", (int)s];
-        NSDictionary *config=@{@kAudioAggregateDeviceNameKey:@"Power Audio Monitor",
+        if(s) return [NSString stringWithFormat:@"Could not capture audio (%d). Check system audio recording permission.", (int)s];
+        NSDictionary *config=@{@kAudioAggregateDeviceNameKey:@"MacAmp Monitor",
             @kAudioAggregateDeviceUIDKey:NSUUID.UUID.UUIDString, @kAudioAggregateDeviceIsPrivateKey:@YES,
             @kAudioAggregateDeviceMainSubDeviceKey:outputUID,
             @kAudioAggregateDeviceSubDeviceListKey:@[@{@kAudioSubDeviceUIDKey:outputUID}],
             @kAudioAggregateDeviceTapListKey:@[@{@kAudioSubTapUIDKey:desc.UUID.UUIDString,@kAudioSubTapDriftCompensationKey:@YES}],
             @kAudioAggregateDeviceTapAutoStartKey:@YES};
         s=AudioHardwareCreateAggregateDevice((__bridge CFDictionaryRef)config,&aggregate);
-        if(s) return [NSString stringWithFormat:@"Gagal membuka output (%d).",(int)s];
+        if(s) return [NSString stringWithFormat:@"Could not open the output device (%d).",(int)s];
         unsigned first=0;
         bool ready=false;
         for(int attempt=0;attempt<12;++attempt) {
@@ -197,11 +197,11 @@ struct Engine {
         if(!ready) {
             AudioStreamBasicDescription f{};
             readProp(tap,kAudioTapPropertyFormat,&f,sizeof(f));
-            return [NSString stringWithFormat:@"Format tap %.0f Hz (%u kanal), output %.0f Hz belum cocok.",f.mSampleRate,f.mChannelsPerFrame,rate];
+            return [NSString stringWithFormat:@"Unsupported audio format. Capture: %.0f Hz (%u channels). Output: %.0f Hz.",f.mSampleRate,f.mChannelsPerFrame,rate];
         }
         s=AudioDeviceCreateIOProcID(aggregate,render,this,&proc);
         if(!s) s=AudioDeviceStart(aggregate,proc);
-        return s ? [NSString stringWithFormat:@"Audio gagal dimulai (%d). Periksa izin audio sistem.",(int)s] : nil;
+        return s ? [NSString stringWithFormat:@"Could not start audio (%d). Check system audio recording permission.",(int)s] : nil;
     }
 };
 
@@ -255,10 +255,10 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     window=[[NSWindow alloc] initWithContentRect:NSMakeRect(0,0,482,409)
         styleMask:NSWindowStyleMaskTitled|NSWindowStyleMaskClosable|NSWindowStyleMaskMiniaturizable
         backing:NSBackingStoreBuffered defer:NO];
-    window.title=@"Power Audio"; window.releasedWhenClosed=NO;
+    window.title=@"MacAmp"; window.releasedWhenClosed=NO;
     NSView *view=window.contentView;
-    NSTextField *title=label(@"Power Audio",NSMakeRect(70,351,210,36),27,NSFontWeightBold);
-    NSImage *art=[[NSImage alloc] initWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"PowerAudio" ofType:@"png"]];
+    NSTextField *title=label(@"MacAmp",NSMakeRect(70,351,210,36),27,NSFontWeightBold);
+    NSImage *art=[[NSImage alloc] initWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"MacAmp" ofType:@"png"]];
     NSImageView *icon=[NSImageView imageViewWithImage:art];
     icon.frame=NSMakeRect(19,346,45,45);
     menuItem=[NSStatusBar.systemStatusBar statusItemWithLength:NSVariableStatusItemLength];
@@ -272,26 +272,26 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         [bars stroke];
         return YES;
     }];
-    [mark setTemplate:YES]; menuItem.button.image=mark; menuItem.button.toolTip=@"Power Audio";
-    [menuItem.button setAccessibilityLabel:@"Power Audio"];
-    button=[NSButton buttonWithTitle:@"Aktifkan efek" target:self action:@selector(toggle:)];
+    [mark setTemplate:YES]; menuItem.button.image=mark; menuItem.button.toolTip=@"MacAmp";
+    [menuItem.button setAccessibilityLabel:@"MacAmp"];
+    button=[NSButton buttonWithTitle:@"Enable Effects" target:self action:@selector(toggle:)];
     button.frame=NSMakeRect(323,351,139,36); button.bezelColor=NSColor.systemTealColor;
     button.keyEquivalent=@" ";
-    NSTextField *outputLabel=label(@"Output Mac",NSMakeRect(24,302,122,23),14,NSFontWeightMedium);
+    NSTextField *outputLabel=label(@"Mac Output",NSMakeRect(24,302,122,23),14,NSFontWeightMedium);
     outputPicker=[[NSPopUpButton alloc] initWithFrame:NSMakeRect(153,298,309,32) pullsDown:NO];
     outputPicker.target=self; outputPicker.action=@selector(selectWindowOutput:);
-    [outputPicker setAccessibilityLabel:@"Output suara Mac"];
+    [outputPicker setAccessibilityLabel:@"Mac audio output"];
     __weak Controller *weakSelf=self;
     outputListener=^(UInt32 count,const AudioObjectPropertyAddress *addresses) { [weakSelf refreshOutputs]; };
     for(const auto &addr:{outputDevicesAddress,defaultOutputAddress})
         AudioObjectAddPropertyListenerBlock(kAudioObjectSystemObject,&addr,dispatch_get_main_queue(),outputListener);
     [self refreshOutputs];
-    collections=[NSSegmentedControl segmentedControlWithLabels:@[@"Bawaan", @"Bonus"] trackingMode:NSSegmentSwitchTrackingSelectOne target:self action:@selector(changeCollection:)];
+    collections=[NSSegmentedControl segmentedControlWithLabels:@[@"Built-in", @"Bonus"] trackingMode:NSSegmentSwitchTrackingSelectOne target:self action:@selector(changeCollection:)];
     collections.frame=NSMakeRect(19,251,177,30);
-    [collections setAccessibilityLabel:@"Koleksi preset"];
+    [collections setAccessibilityLabel:@"Preset collection"];
     profiles=[[NSPopUpButton alloc] initWithFrame:NSMakeRect(211,251,251,30) pullsDown:NO];
     profiles.target=self; profiles.action=@selector(changeProfile:);
-    [profiles setAccessibilityLabel:@"Pilih preset suara"];
+    [profiles setAccessibilityLabel:@"Choose an audio preset"];
 
     NSBox *card=[[NSBox alloc] initWithFrame:NSMakeRect(22,79,438,158)];
     card.boxType=NSBoxCustom; card.titlePosition=NSNoTitle; card.cornerRadius=12;
@@ -306,13 +306,13 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     NSInteger saved=std::clamp<NSInteger>([defaults integerForKey:@"IntensityPercent"],50,150);
     slider=[NSSlider sliderWithValue:saved minValue:50 maxValue:150 target:self action:@selector(changeStrength:)];
     slider.frame=NSMakeRect(16,35,401,28); slider.continuous=YES;
-    [slider setAccessibilityLabel:@"Intensitas efek"];
+    [slider setAccessibilityLabel:@"Effect intensity"];
     [self changeStrength:slider];
     for(NSView *v in @[presetTitle,strengthLabel,curve,slider]) [card.contentView addSubview:v];
-    status=[NSTextField wrappingLabelWithString:@"Efek mati. Kamu mendengar audio asli."];
+    status=[NSTextField wrappingLabelWithString:@"Effects are off. You’re hearing the original audio."];
     status.font=[NSFont systemFontOfSize:12]; status.textColor=NSColor.secondaryLabelColor;
     status.frame=NSMakeRect(24,12,252,48);
-    compare=[NSButton buttonWithTitle:@"Preset sebelumnya" target:self action:@selector(compare:)];
+    compare=[NSButton buttonWithTitle:@"Previous Preset" target:self action:@selector(compare:)];
     compare.frame=NSMakeRect(277,22,185,30);
     compare.image=[NSImage imageWithSystemSymbolName:@"arrow.left.arrow.right" accessibilityDescription:nil];
     compare.imagePosition=NSImageLeading;
@@ -337,17 +337,17 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     lastSelection[group]=index; collections.selectedSegment=group;
     [profiles removeAllItems];
     if(group) [profiles addItemsWithTitles:bonusNames()];
-    else { [profiles addItemWithTitle:@"Prototipe"]; [profiles addItemsWithTitles:builtInNames()]; }
+    else { [profiles addItemWithTitle:@"Prototype"]; [profiles addItemsWithTitles:builtInNames()]; }
     [profiles selectItemAtIndex:group ? index-split : index];
     NSString *name=profiles.titleOfSelectedItem;
     presetTitle.stringValue=name;
     slider.hidden=index!=0; curve.hidden=index==0;
     if(index) [curve showPreset:name];
-    strengthLabel.stringValue=index ? @"Equalizer   ·   10 band" :
-        [NSString stringWithFormat:@"Intensitas efek   %d%%",engine.intensity.load()];
+    strengthLabel.stringValue=index ? @"10-band equalizer" :
+        [NSString stringWithFormat:@"Effect intensity   %d%%",engine.intensity.load()];
     compare.enabled=prior>=0;
-    compare.toolTip=prior<0 ? @"Pilih dua preset untuk membandingkan." :
-        (prior==0 ? @"Prototipe" : factoryNames()[prior-1]);
+    compare.toolTip=prior<0 ? @"Choose two presets to compare them." :
+        (prior==0 ? @"Prototype" : factoryNames()[prior-1]);
     engine.select((int)index);
     quickPreset.title=name;
     [NSUserDefaults.standardUserDefaults setObject:index ? [@"FxSound · " stringByAppendingString:name] : name forKey:@"SelectedPreset"];
@@ -365,7 +365,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
 -(void)changeStrength:(NSSlider*)sender {
     int percent = (int)lround(sender.doubleValue);
     engine.intensity.store(percent, std::memory_order_relaxed);
-    strengthLabel.stringValue = [NSString stringWithFormat:@"Intensitas efek   %d%%", percent];
+    strengthLabel.stringValue = [NSString stringWithFormat:@"Effect intensity   %d%%", percent];
     [NSUserDefaults.standardUserDefaults setInteger:percent forKey:@"IntensityPercent"];
 }
 -(void)refreshOutputs {
@@ -376,7 +376,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     std::vector<AudioDeviceID> devices(bytes/sizeof(AudioDeviceID));
     if(!error && bytes) error=AudioObjectGetPropertyData(kAudioObjectSystemObject,&outputDevicesAddress,0,nullptr,&bytes,devices.data());
     if(error) devices.clear(); else devices.resize(bytes/sizeof(AudioDeviceID));
-    NSMenu *choices=[[NSMenu alloc] initWithTitle:@"Output Mac"];
+    NSMenu *choices=[[NSMenu alloc] initWithTitle:@"Mac Output"];
     for(AudioDeviceID device:devices) {
         UInt32 selectable=0,alive=0,hidden=0;
         if(device==engine.aggregate ||
@@ -391,8 +391,8 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     outputPicker.menu=choices;
     [outputPicker selectItem:[choices itemWithTag:current]];
     outputPicker.enabled=choices.numberOfItems>0;
-    if(!choices.numberOfItems) [outputPicker addItemWithTitle:@"Output tidak tersedia"];
-    quickOutput.title=outputPicker.titleOfSelectedItem ?: @"Pilih output";
+    if(!choices.numberOfItems) [outputPicker addItemWithTitle:@"No output available"];
+    quickOutput.title=outputPicker.titleOfSelectedItem ?: @"Choose an output";
     quickOutput.enabled=outputPicker.enabled;
     if(choiceScroll && choosingOutput) {
         if(quickOutput.enabled) [self populateChoices];
@@ -402,7 +402,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
 -(void)setMacOutput:(AudioDeviceID)device {
     OSStatus error=AudioObjectSetPropertyData(kAudioObjectSystemObject,&defaultOutputAddress,0,nullptr,sizeof(device),&device);
     if(error) {
-        NSString *message=[NSString stringWithFormat:@"Gagal mengganti output Mac (%d).",(int)error];
+        NSString *message=[NSString stringWithFormat:@"Could not switch the Mac output (%d).",(int)error];
         status.stringValue=message; [self showWindow:nil];
     }
     [self refreshOutputs];
@@ -412,7 +412,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     controlsPanel=[[NSPanel alloc] initWithContentRect:NSMakeRect(0,0,316,189)
         styleMask:NSWindowStyleMaskNonactivatingPanel|NSWindowStyleMaskTitled|NSWindowStyleMaskFullSizeContentView
         backing:NSBackingStoreBuffered defer:NO];
-    controlsPanel.title=@"Kontrol Power Audio";
+    controlsPanel.title=@"MacAmp Controls";
     controlsPanel.titlebarAppearsTransparent=YES;
     controlsPanel.titleVisibility=NSWindowTitleHidden;
     controlsPanel.hidesOnDeactivate=NO;
@@ -420,7 +420,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     controlsPanel.collectionBehavior=NSWindowCollectionBehaviorCanJoinAllSpaces |
         NSWindowCollectionBehaviorFullScreenAuxiliary | NSWindowCollectionBehaviorCanJoinAllApplications;
     NSView *view=controlsPanel.contentView;
-    [view addSubview:label(@"Power Audio",NSMakeRect(15,147,147,26),17,NSFontWeightSemibold)];
+    [view addSubview:label(@"MacAmp",NSMakeRect(15,147,147,26),17,NSFontWeightSemibold)];
     powerCommand=[NSButton buttonWithTitle:button.title target:self action:@selector(toggle:)];
     powerCommand.frame=NSMakeRect(165,144,139,32);
     [view addSubview:powerCommand];
@@ -429,7 +429,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     for(NSButton *picker in @[quickOutput,quickPreset]) {
         BOOL output=picker==quickOutput;
         CGFloat y=output ? 101 : 65;
-        NSString *caption=output ? @"Output Mac" : @"Preset";
+        NSString *caption=output ? @"Mac Output" : @"Preset";
         picker.frame=NSMakeRect(98,y,204,28);
         picker.image=[NSImage imageWithSystemSymbolName:@"chevron.down" accessibilityDescription:nil];
         picker.imagePosition=NSImageTrailing;
@@ -438,9 +438,9 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         [view addSubview:picker];
     }
     view.autoresizesSubviews=NO;
-    NSButton *open=[NSButton buttonWithTitle:@"Buka Power Audio" target:self action:@selector(showWindow:)];
+    NSButton *open=[NSButton buttonWithTitle:@"Open MacAmp" target:self action:@selector(showWindow:)];
     open.frame=NSMakeRect(10,15,156,32); [view addSubview:open];
-    NSButton *quit=[NSButton buttonWithTitle:@"Keluar" target:NSApp action:@selector(terminate:)];
+    NSButton *quit=[NSButton buttonWithTitle:@"Quit" target:NSApp action:@selector(terminate:)];
     quit.frame=NSMakeRect(226,15,78,32); [view addSubview:quit];
 }
 // Insert the list under its field while keeping the panel anchored to the menu bar.
@@ -490,7 +490,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         row.tag=tag; row.alignment=NSTextAlignmentLeft; row.bordered=NO;
         row.frame=NSMakeRect(4,y,width-8,26);
         if(tag==selected) {
-            row.image=[NSImage imageWithSystemSymbolName:@"checkmark" accessibilityDescription:@"Dipilih"];
+            row.image=[NSImage imageWithSystemSymbolName:@"checkmark" accessibilityDescription:@"Selected"];
             row.imagePosition=NSImageLeading; selectedY=y;
         }
         [rows addSubview:row]; y+=27;
@@ -499,9 +499,9 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         for(NSMenuItem *item in outputPicker.itemArray) if(item.tag) addChoice(item.title,item.tag);
     } else {
         NSInteger index=0;
-        for(NSString *group in @[@"Bawaan",@"Bonus"]) {
+        for(NSString *group in @[@"Built-in",@"Bonus"]) {
             [rows addSubview:label(group,NSMakeRect(5,y,width-9,22),12,NSFontWeightSemibold)]; y+=22;
-            NSArray *names=index ? bonusNames() : [@[@"Prototipe"] arrayByAddingObjectsFromArray:builtInNames()];
+            NSArray *names=index ? bonusNames() : [@[@"Prototype"] arrayByAddingObjectsFromArray:builtInNames()];
             for(NSString *name in names) addChoice(name,index++);
         }
     }
@@ -576,21 +576,21 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     CFStringRef name=nullptr;
     if(!readProp(engine.device,kAudioObjectPropertyName,&name,sizeof(name)) && name)
         outputName=CFBridgingRelease(name);
-    else outputName=@"Output Mac";
+    else outputName=@"Mac Output";
     quiet=0; retryTicks=0;
-    status.stringValue=[@"Efek aktif · " stringByAppendingString:outputName];
+    status.stringValue=[@"Effects on · " stringByAppendingString:outputName];
     menuItem.button.toolTip=status.stringValue;
 }
 -(void)off:(NSString*)message {
-    [timer invalidate]; timer=nil; engine.stop(); status.stringValue=message; button.title=@"Aktifkan efek";
+    [timer invalidate]; timer=nil; engine.stop(); status.stringValue=message; button.title=@"Enable Effects";
     powerCommand.title=button.title;
-    menuItem.button.toolTip=@"Power Audio · Efek mati";
+    menuItem.button.toolTip=@"MacAmp · Effects off";
 }
 -(void)toggle:(id)sender {
-    if(timer) { [self off:@"Efek mati. Kamu mendengar audio asli."]; return; }
+    if(timer) { [self off:@"Effects are off. You’re hearing the original audio."]; return; }
     NSString *error=engine.start();
     if(error) { [self off:error]; return; }
-    [self connected]; button.title=@"Matikan efek";
+    [self connected]; button.title=@"Disable Effects";
     powerCommand.title=button.title;
     timer=[NSTimer timerWithTimeInterval:.5 target:self selector:@selector(check:) userInfo:nil repeats:YES];
     [NSRunLoop.mainRunLoop addTimer:timer forMode:NSRunLoopCommonModes];
@@ -602,7 +602,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         !readProp(current,kAudioDevicePropertyNominalSampleRate,&rate,sizeof(rate)) && rate>0;
     if(engine.proc && (!ready || engine.invalid || current!=engine.device || rate!=engine.rate)) {
         engine.stop(); retryTicks=0;
-        status.stringValue=@"Mengikuti output Mac…"; menuItem.button.toolTip=status.stringValue;
+        status.stringValue=@"Switching to the current Mac output…"; menuItem.button.toolTip=status.stringValue;
         return;
     }
     if(!engine.proc) {
@@ -611,13 +611,13 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         NSString *error=engine.start();
         if(error) {
             engine.stop(); retryTicks=5;
-            status.stringValue=[@"Mencoba lagi · " stringByAppendingString:error];
+            status.stringValue=[@"Retrying · " stringByAppendingString:error];
         } else [self connected];
         return;
     }
     if(engine.signal.exchange(false)) {
-        quiet=0; status.stringValue=[@"Efek aktif · " stringByAppendingString:outputName];
-    } else if(++quiet==6) status.stringValue=[@"Menunggu audio · " stringByAppendingString:outputName];
+        quiet=0; status.stringValue=[@"Effects on · " stringByAppendingString:outputName];
+    } else if(++quiet==6) status.stringValue=[@"Waiting for audio · " stringByAppendingString:outputName];
 }
 -(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)app { return NO; }
 -(void)applicationWillTerminate:(NSNotification*)note {

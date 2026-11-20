@@ -1,5 +1,5 @@
-## Menu bar saat fullscreen
+## Menu bar controls in full screen
 
-Menu ikon Tiga Nada sudah berisi kontrol efek, perangkat output, dan preset sejak aplikasi dibuka. Daftar perangkat dan tanda pilihan diperbarui ketika berubah, sehingga klik pertama bisa langsung membuka menu saat aplikasi lain sedang fullscreen.
+The three-bar menu now contains the effect controls, output devices, and presets as soon as the app launches. Power Audio refreshes the device list and selection marks as they change, so the menu can open on the first click while another app is in full screen.
 
-Untuk memperbarui, pilih **Keluar** dari menu Power Audio, ekstrak **PowerAudio-v0.7.2-macos-arm64.zip**, ganti salinan lama, lalu buka kembali. Untuk macOS 14.2 ke atas pada Apple Silicon. Build memakai tanda tangan ad hoc dan belum dinotariskan Apple.
+To update, quit Power Audio, extract **PowerAudio-v0.7.2-macos-arm64.zip**, replace the previous copy in Applications, and reopen the app. This build requires Apple Silicon and macOS 14.2 or later. It is ad hoc signed and has not been notarized by Apple.

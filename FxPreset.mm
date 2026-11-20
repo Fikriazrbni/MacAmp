@@ -113,7 +113,7 @@ static NSString *loadFactory(NSMutableArray<NSDictionary *> *parameters,double r
     for (NSString *script in @[@"sos.js",@"controls.js",@"load.js"]) {
         NSString *source=[NSString stringWithContentsOfFile:[folder stringByAppendingPathComponent:script]
                                                    encoding:NSUTF8StringEncoding error:nil];
-        if (!source) return @"File DSP FxSound tidak ditemukan.";
+        if (!source) return @"Could not find the FxSound DSP script.";
         [context evaluateScript:source];
         if(context.exception) return context.exception.toString;
     }
@@ -123,9 +123,9 @@ static NSString *loadFactory(NSMutableArray<NSDictionary *> *parameters,double r
         NSString *file=[names[i] stringByAppendingPathExtension:@"fac"];
         NSString *text=[NSString stringWithContentsOfFile:[folder stringByAppendingPathComponent:file]
                                                  encoding:NSUTF8StringEncoding error:nil];
-        if(!text) return @"File preset FxSound tidak ditemukan.";
+        if(!text) return @"Could not find the FxSound preset file.";
         NSDictionary *params=[[context[@"readPreset"] callWithArguments:@[text,@(rate)]] toDictionary];
-        if(!params || context.exception) return @"Preset FxSound gagal dimuat.";
+        if(!params || context.exception) return @"Could not load the FxSound preset.";
         [parameters addObject:params];
     }
     return nil;

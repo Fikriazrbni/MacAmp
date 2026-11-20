@@ -1,9 +1,9 @@
-## Power Audio berjalan dari menu bar
+## Power Audio runs from the menu bar
 
-Saat Power Audio dibuka, ikon tiga batang muncul di menu bar. Aplikasi berjalan tanpa ikon di Dock atau ⌘ Tab dan membuka jendela utama hanya saat diperlukan.
+The three-bar icon appears when Power Audio launches. The app stays out of the Dock and the ⌘ Tab switcher and opens the main window on demand.
 
-- Klik **ikon tiga batang → Buka Power Audio** untuk membuka kembali jendela utama atau memulihkannya setelah diminimalkan.
-- Tutup jendela untuk melanjutkan pemrosesan audio dari menu bar. Panel tetap menyediakan kontrol efek, output, dan preset.
-- Klik **ikon tiga batang → Keluar** untuk menghentikan aplikasi.
+- Use the three-bar panel to open the main window or restore it after minimizing it.
+- Close the window to continue processing audio from the menu bar. The panel still provides effect, output, and preset controls.
+- Use the quit button in the panel to exit the app.
 
-Untuk memperbarui, keluar dari versi sebelumnya, ekstrak **PowerAudio-v0.7.5-macos-arm64.zip**, ganti salinan lama di Applications, lalu buka kembali. Paket ini untuk Apple Silicon dengan macOS 14.2 ke atas. Build menggunakan tanda tangan ad hoc dan belum dinotariskan Apple.
+To update, quit Power Audio, extract **PowerAudio-v0.7.5-macos-arm64.zip**, replace the previous copy in Applications, and reopen the app. This build requires Apple Silicon and macOS 14.2 or later. It is ad hoc signed and has not been notarized by Apple.

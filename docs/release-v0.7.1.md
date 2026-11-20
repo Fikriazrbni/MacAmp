@@ -1,5 +1,5 @@
-## Ikon Power Audio di macOS
+## Power Audio’s macOS icon
 
-Finder memakai ikon Tiga Nada dari kumpulan ukuran ikon macOS. Saat aplikasi berjalan, Dock dan jendela memakai gambar Tiga Nada yang disertakan dalam bundle.
+Finder now uses the three-bar artwork at native macOS icon sizes. The Dock and main window use the artwork included in the app bundle.
 
-Untuk memperbarui, pilih **Keluar** dari menu Power Audio, ekstrak **PowerAudio-v0.7.1-macos-arm64.zip**, ganti salinan lama di Applications, lalu buka kembali. Rilis ini untuk Mac Apple Silicon dengan macOS 14.2 ke atas. Build memakai tanda tangan ad hoc dan belum dinotariskan Apple.
+To update, quit Power Audio, extract **PowerAudio-v0.7.1-macos-arm64.zip**, replace the previous copy in Applications, and reopen the app. This build requires Apple Silicon and macOS 14.2 or later. It is ad hoc signed and has not been notarized by Apple.
