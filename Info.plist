@@ -6,8 +6,9 @@
 <key>CFBundleIconFile</key><string>AppIcon.icns</string>
 <key>CFBundleName</key><string>Power Audio</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>13</string>
-<key>CFBundleShortVersionString</key><string>0.7.4</string>
+<key>LSUIElement</key><true/>
+<key>CFBundleVersion</key><string>14</string>
+<key>CFBundleShortVersionString</key><string>0.7.5</string>
 <key>LSMinimumSystemVersion</key><string>14.2</string>
 <key>NSAudioCaptureUsageDescription</key><string>Power Audio memakai audio sistem untuk memperkuat suara dan memutarnya kembali secara langsung.</string>
 </dict></plist>

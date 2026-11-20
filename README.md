@@ -16,16 +16,17 @@
 
 | Platform | Paket | Catatan rilis |
 | --- | --- | --- |
-| macOS 14.2 ke atas · Apple Silicon | [Unduh Power Audio untuk Mac](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.4/PowerAudio-v0.7.4-macos-arm64.zip) | [v0.7.4](https://github.com/Fikriazrbni/PowerAudio/releases/tag/v0.7.4) |
+| macOS 14.2 ke atas · Apple Silicon | [Unduh Power Audio untuk Mac](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.5/PowerAudio-v0.7.5-macos-arm64.zip) | [v0.7.5](https://github.com/Fikriazrbni/PowerAudio/releases/tag/v0.7.5) |
 
-Paket berisi aplikasi mandiri. Build memakai tanda tangan ad hoc dan belum dinotariskan oleh Apple. Jika macOS meminta verifikasi saat pertama dibuka, kamu bisa mencocokkan berkas unduhan dengan [checksum SHA-256](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.4/SHA256SUMS.txt). Jika kamu mempercayai unduhan ini, gunakan **Open Anyway** di **System Settings → Privacy & Security** bila tersedia.
+Paket berisi aplikasi mandiri. Build memakai tanda tangan ad hoc dan belum dinotariskan oleh Apple. Jika macOS meminta verifikasi saat pertama dibuka, kamu bisa mencocokkan berkas unduhan dengan [checksum SHA-256](https://github.com/Fikriazrbni/PowerAudio/releases/download/v0.7.5/SHA256SUMS.txt). Jika kamu mempercayai unduhan ini, gunakan **Open Anyway** di **System Settings → Privacy & Security** bila tersedia.
 
 ## Mulai pakai
 
-1. Ekstrak ZIP, pindahkan **Power Audio.app** ke **Applications**, lalu buka.
-2. Putar musik atau video, pilih perangkat di **Output Mac**, lalu klik **Aktifkan efek**. Izinkan akses audio sistem saat macOS memintanya.
-3. Coba **Bawaan → Music**, lalu **Bonus → Pop**. Klik **Preset sebelumnya** untuk berpindah di antara keduanya pada volume Mac yang sama.
-4. Klik **Matikan efek** untuk mendengar audio asli. Untuk memakai kontrol ringkas, tutup jendela dan klik ikon tiga batang di menu bar. Pilih **Keluar** untuk menghentikan aplikasi.
+1. Ekstrak ZIP, pindahkan **Power Audio.app** ke **Applications**, lalu buka. Ikon tiga batang muncul di menu bar. Pada v0.7.5, jendela utama tetap tertutup saat aplikasi mulai, dan Power Audio tidak muncul di Dock atau ⌘ Tab.
+2. **Untuk membuka jendela utama**, klik **ikon tiga batang → Buka Power Audio**. Dari panel yang sama kamu juga bisa langsung memilih output dan preset.
+3. Putar musik atau video, pilih perangkat di **Output Mac**, lalu klik **Aktifkan efek**. Izinkan akses audio sistem saat macOS memintanya.
+4. Di jendela utama, coba **Bawaan → Music**, lalu **Bonus → Pop**. Klik **Preset sebelumnya** untuk membandingkan keduanya. Klik **Matikan efek** untuk mendengar audio asli.
+5. Tutup jendela utama untuk melanjutkan pemakaian dari menu bar. Efek yang aktif terus berjalan. Untuk menghentikan aplikasi, klik **ikon tiga batang → Keluar**.
 
 ## Fitur
 
@@ -52,7 +53,7 @@ Saat efek aktif, Power Audio menggunakan Core Audio Tap untuk membaca suara yang
 
 ## Dokumentasi
 
-- [Catatan rilis v0.7.4](docs/release-v0.7.4.md) · [Semua rilis](https://github.com/Fikriazrbni/PowerAudio/releases)
+- [Catatan rilis v0.7.5](docs/release-v0.7.5.md) · [Semua rilis](https://github.com/Fikriazrbni/PowerAudio/releases)
 - [Antarmuka dan routing Core Audio](PowerAudio.mm) · [Pemrosesan preset](FxPreset.mm) · [Efek ambience](Ambience.hpp)
 - [Asal preset dan komponen DSP](FxSound/NOTICE.txt) · [Lisensi AGPL-3.0](LICENSE)
 

@@ -259,13 +259,6 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     NSView *view=window.contentView;
     NSTextField *title=label(@"Power Audio",NSMakeRect(70,351,210,36),27,NSFontWeightBold);
     NSImage *art=[[NSImage alloc] initWithContentsOfFile:[NSBundle.mainBundle pathForResource:@"PowerAudio" ofType:@"png"]];
-    if (art) {
-        NSApp.applicationIconImage=art;
-        NSImageView *dockIcon=[NSImageView imageViewWithImage:art];
-        dockIcon.imageScaling=NSImageScaleProportionallyUpOrDown;
-        NSApp.dockTile.contentView=dockIcon;
-        [NSApp.dockTile display];
-    }
     NSImageView *icon=[NSImageView imageViewWithImage:art];
     icon.frame=NSMakeRect(19,346,45,45);
     menuItem=[NSStatusBar.systemStatusBar statusItemWithLength:NSVariableStatusItemLength];
@@ -336,7 +329,7 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
     menuItem.button.target=self;
     [menuItem.button sendActionOn:NSEventMaskLeftMouseDown];
     menuItem.button.action=@selector(toggleControls:);
-    [window center]; [window makeKeyAndOrderFront:nil]; [NSApp activateIgnoringOtherApps:YES];
+    [window center];
 }
 -(void)displayProfile:(NSInteger)index {
     NSInteger split=1+builtInNames().count;
@@ -570,7 +563,12 @@ static NSTextField *label(NSString *text,NSRect rect,CGFloat size,NSFontWeight w
         return event;
     }];
 }
--(void)showWindow:(id)sender { [self hideControls]; [window makeKeyAndOrderFront:nil]; [NSApp activateIgnoringOtherApps:YES]; }
+-(void)showWindow:(id)sender {
+    [self hideControls];
+    if(window.isMiniaturized) [window deminiaturize:nil];
+    [NSApp activateIgnoringOtherApps:YES];
+    [window makeKeyAndOrderFront:nil];
+}
 -(BOOL)applicationShouldHandleReopen:(NSApplication*)app hasVisibleWindows:(BOOL)visible {
     [self showWindow:nil]; return NO;
 }
@@ -666,7 +664,7 @@ int main(int argc,const char **argv) {
     }
     @autoreleasepool {
         NSApplication *app=[NSApplication sharedApplication]; __attribute__((objc_precise_lifetime)) Controller *controller=[Controller new];
-        app.delegate=controller; [app setActivationPolicy:NSApplicationActivationPolicyRegular]; [app run];
+        app.delegate=controller; [app run];
         (void)controller;
     }
     return 0;
